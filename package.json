@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/kevincogen/tinyapp/issues"
   },
-  "homepage": "https://github.com/kevincogen/tinyapp#readme"
+  "homepage": "https://github.com/kevincogen/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
