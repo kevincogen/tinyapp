@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = 8080; //default port is 8080
 
+app.set("view engine", "ejs");
+
 const urlDatabase = {
   "b2xVn2": "http://wwww.lighthouselabs.ca",
   "9sm5xK": "http://wwww.google.com"
@@ -12,11 +14,11 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`)
+  console.log(`Example app listening on port ${PORT}!`);
 });
 
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase)
+  res.json(urlDatabase);
 });
 
 app.get("/hello", (req, res) => {
