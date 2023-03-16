@@ -10,6 +10,19 @@ const urlDatabase = {
   "shortboi": "www.shortboi.com"
 };
 
+const generateRandomString = () => {
+// chars variable contains all characters to be used
+//while loop runs while randomString is less than 6. 
+//every iteration of loop adds char[index] to randomString
+//[index expression] generates a random number between 0 and 62, rounds it to nearest integer
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+  
+  while (randomString.length < 6) {
+    randomString += chars[Math.floor(Math.random() * chars.length)];
+  }
+};
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -31,7 +44,16 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
+});
+
+app.post("/urls", (req, res) => {
+  console.log(req.body); // Log the POST request body to the console
+  res.send("Ok"); // Respond with 'Ok' (we will replace this)
 });
