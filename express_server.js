@@ -5,10 +5,12 @@ const PORT = 8080; //default port is 8080
 app.set("view engine", "ejs");
 
 const urlDatabase = {
-  "b2xVn2": "http://wwww.lighthouselabs.ca",
-  "9sm5xK": "http://wwww.google.com",
+  "b2xVn2": "http://www.lighthouselabs.ca",
+  "9sm5xK": "http://www.google.com",
   "shortboi": "www.shortboi.com"
 };
+
+app.use(express.urlencoded({ extended: true }));
 
 const generateRandomString = () => {
 // chars variable contains all characters to be used
@@ -21,6 +23,7 @@ const generateRandomString = () => {
   while (randomString.length < 6) {
     randomString += chars[Math.floor(Math.random() * chars.length)];
   }
+  return randomString
 };
 
 app.get("/", (req, res) => {
@@ -55,5 +58,14 @@ app.get("/urls/:id", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString()
+  urlDatabase[shortURL] = req.body.longURL
+  console.log(urlDatabase)
+  // res.send("Ok"); // Respond with 'Ok' (we will replace this)'
+  res.redirect(`/urls/:${shortURL}`) //issue - doesn't get longURL 
+});
+
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id]
+  res.redirect(longURL);
 });
