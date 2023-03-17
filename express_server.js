@@ -49,11 +49,12 @@ app.get("/urls", (req, res) => {
 
 //route for urls/new
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { urls: urlDatabase, username: req.cookies['username'] };
+  res.render("urls_new", templateVars);
 });
 //route for urls/:id
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
+  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies['username']  };
   res.render("urls_show", templateVars);
 });
 
