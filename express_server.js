@@ -90,3 +90,9 @@ app.post('/login', (req, res) => {
   res.cookie('username', username);
   res.redirect('/urls');
 });
+
+//clear cookie from login
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls');
+});
