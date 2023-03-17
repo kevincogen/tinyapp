@@ -49,7 +49,7 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
-
+//route for urls/:id
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id] };
   res.render("urls_show", templateVars);
@@ -58,27 +58,33 @@ app.get("/urls/:id", (req, res) => {
 //post request for /urls route - generate shortURL and redirect user to URL
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
-  const shortURL = generateRandomString()
-  urlDatabase[shortURL] = req.body.longURL
-  console.log(urlDatabase)
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  console.log(urlDatabase);
   // res.send("Ok"); // Respond with 'Ok' (we will replace this)'
   res.redirect(`/urls/:${shortURL}`) //issue - doesn't get longURL 
 });
-
+//redirect shortURL to long URL
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id]
+  const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
 
-
+// Update long URL 
 app.post('/urls/:id', (req, res) => {
-  const longURL = req.body.longURL
-  // console.log(req.body.longURL);
+  const longURL = req.body.longURL;
   urlDatabase[req.params.id] = longURL;
   res.redirect('/urls');
 });
-
+// delete URL
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id]
-  res.redirect("/urls")
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
+});
+
+//handle POST to /login - set a cookie and redirect back to /urls
+app.post('/login', (req, res) => {
+  const { username } = req.body;
+  res.cookie('username', username);
+  res.redirect('/urls');
 });
