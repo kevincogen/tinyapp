@@ -14,9 +14,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+        <a class="nav-item nav-link mr-3" href="/urls">My URLs</a>
+        <a class="nav-item nav-link mr-3" href="/urls/new">Create New URL</a>
       </div>
     </div>
+    <form method="POST" action="/login" class="form-inline">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" name="username" class="form-control mx-2" id="username" placeholder="Username">
+      </div>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
   </nav>
 </header>
