@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; //default port is 8080
-
+app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -9,8 +9,6 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
   "shortboi": "www.shortboi.com"
 };
-
-app.use(express.urlencoded({ extended: true }));
 
 const generateRandomString = () => {
 // chars variable contains all characters to be used
@@ -47,6 +45,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+//route for urls/new
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -56,6 +55,7 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+//post request for /urls route - generate shortURL and redirect user to URL
 app.post("/urls", (req, res) => {
   console.log(req.body); // Log the POST request body to the console
   const shortURL = generateRandomString()
@@ -68,6 +68,14 @@ app.post("/urls", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id]
   res.redirect(longURL);
+});
+
+
+app.post('/urls/:id', (req, res) => {
+  const longURL = req.body.longURL
+  // console.log(req.body.longURL);
+  urlDatabase[req.params.id] = longURL;
+  res.redirect('/urls');
 });
 
 app.post("/urls/:id/delete", (req, res) => {
