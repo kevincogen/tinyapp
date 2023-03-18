@@ -6,6 +6,7 @@ app.set("view engine", "ejs");
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+//databases and helpers
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -13,37 +14,41 @@ const urlDatabase = {
 };
 
 const generateRandomString = () => {
-// chars variable contains all characters to be used
-//while loop runs while randomString is less than 6. 
-//every iteration of loop adds char[index] to randomString
-//[index expression] generates a random number between 0 and 62, rounds it to nearest integer
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let randomString = '';
-  
   while (randomString.length < 6) {
     randomString += chars[Math.floor(Math.random() * chars.length)];
   }
   return randomString
 };
 
+const getUserByEmail = email => {
+  for (const userID in users) {
+    const user = users[userID]
+    if (user.email === email) {
+      return user
+    }
+  }
+  return null;
+};
+
 const users = {};
 
+//first iteration of requests
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
-
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-
 app.get("/hello", (req, res) => {
   res.send("<html><body>hey <b>buddy</b></body></html>\n");
 });
 
+//render urls_index
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
   res.render("urls_index", templateVars);
@@ -106,8 +111,20 @@ app.get('/registration', (req, res) => {
   res.render("registration", templateVars);
 });
 
+
 //post endpoint for /register - add to users object
-app.post('/registration', (req, res) => {
+//include registration errors
+app.post("/registration", (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).send("Email and password fields cannot be empty.");
+    return;
+  }
+  const user = getUserByEmail(email);
+  if (user) {
+    res.status(400).send("Email already exists.");
+    return;
+  }
   const userID = generateRandomString()
   users[userID] = {
     userID,
@@ -116,5 +133,6 @@ app.post('/registration', (req, res) => {
   }
   res.cookie('user_id', userID)
   console.log(users)
+  console.log(req.body.email)
   res.redirect('/urls');
 });
