@@ -92,17 +92,26 @@ app.post("/urls/:id/delete", (req, res) => {
   res.redirect("/urls");
 });
 
-//handle POST to /login - set a cookie and redirect back to /urls
+//handle POST to /login - set user_id cookie and redirect back to /urls
 app.post('/login', (req, res) => {
-  const { username } = req.body;
-  res.cookie('username', username);
+  const { email, password } = req.body;
+  const user = getUserByEmail(email);
+  if (!user) {
+    res.status(403).send("This Email is not associated with a Registered User");
+    return;
+  }
+  if (user.password !== password) {
+    res.status(403).send("Password entered does not match")
+    return;
+  }
+  res.cookie('user_id', user.userID);
   res.redirect('/urls');
 });
 
-//clear cookie from login
+//clear user_id cookie from login
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 //get request to render registration
@@ -137,6 +146,7 @@ app.post('/registration', (req, res) => {
   res.redirect('/urls');
 });
 
+//get request render login
 app.get('/login', (req, res) => {
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render('login', templateVars)
