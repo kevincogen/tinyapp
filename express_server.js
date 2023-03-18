@@ -114,7 +114,7 @@ app.get('/registration', (req, res) => {
 
 //post endpoint for /register - add to users object
 //include registration errors
-app.post("/registration", (req, res) => {
+app.post('/registration', (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     res.status(400).send("Email and password fields cannot be empty.");
@@ -136,3 +136,8 @@ app.post("/registration", (req, res) => {
   console.log(req.body.email)
   res.redirect('/urls');
 });
+
+app.get('/login', (req, res) => {
+  const templateVars = { user: users[req.cookies['user_id']] };
+  res.render('login', templateVars)
+})
