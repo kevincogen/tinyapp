@@ -97,3 +97,9 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
 });
+
+//get request to render registration
+app.get('/registration', (req, res) => {
+  const templateVars = { username: req.cookies['username'] };
+  res.render("registration", templateVars)
+});
