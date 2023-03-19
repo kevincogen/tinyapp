@@ -75,7 +75,7 @@ app.get("/urls/new", (req, res) => {
   }
   res.redirect('/login')
 });
-//GET /urls/;id route for urls/:id
+//GET /urls/:id route for urls/:id
 app.get("/urls/:id", (req, res) => {
   const userURLs = urlsForUser(req.cookies.user_id, urlDatabase);
   const templateVars = { urls: userURLs, user: users[req.cookies.user_id], id: req.params.id }
@@ -112,14 +112,22 @@ app.get("/u/:id", (req, res) => {
 
 // POST URLS/:id - Update long URL 
 app.post('/urls/:id', (req, res) => {
-  const longURL = req.body.longURL;
-  urlDatabase[req.params.id].longURL = longURL;
-  res.redirect('/urls');
+  if (req.cookies.user_id === urlDatabase[req.params.id].userID) {
+    const longURL = req.body.longURL;
+    urlDatabase[req.params.id].longURL = longURL;
+    res.redirect('/urls');
+  } else {
+    res.status(400).send("Welp, looks like you can't update that URL...");   
+  }
 });
 // POST Delete
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
+  if (req.cookies.user_id === urlDatabase[req.params.id].userID) {
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
+  } else {
+    res.status(400).send("Sorry, but that's not a URL you can delete!");   
+  }
 });
 
 //POST login
