@@ -18,36 +18,40 @@
   </head>
   <body>
     <%- include('partials/_header') %>
-    <main style="margin: 1em;">
-      <h3>My URLs</h3>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Short URL ID</th>
-            <th scope="col">Long URL</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (let id in urls) { %>
+    <% if (!user) { %>
+      <h3>You need to log in to view your URLs.</h3>
+    <% } else { %>
+      <main style="margin: 1em;">
+        <h3>My URLs</h3>
+        <table class="table">
+          <thead>
             <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
-              <td>
-                <a class="btn btn-outline-primary" href="/urls/<%= id %>">Edit</a>
-              </td>
-              <td>
-                <form method="POST" action="/urls/<%=id%>/delete">
-                  <button type="submit" class="btn btn-outline-danger">Delete</button>
-                </form>
-              </td>
+              <th scope="col">Short URL ID</th>
+              <th scope="col">Long URL</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delete</th>
             </tr>
-          <% } %>
-        </tbody>
-      </table>
-      <a class="btn btn-outline-primary" href="#">SHORTEN NEW URL</a>
-    </main>
+          </thead>
+          <tbody>
+            <% for (let id in urls) { %>
+              <tr>
+                <td><%= id %></td>
+                <td><%= urls[id] %></td>
+                <td>
+                  <a class="btn btn-outline-primary" href="/urls/<%= id %>">Edit</a>
+                </td>
+                <td>
+                  <form method="POST" action="/urls/<%=id%>/delete">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+        <a class="btn btn-outline-primary" href="#">SHORTEN NEW URL</a>
+      </main>
+    <% } %>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
