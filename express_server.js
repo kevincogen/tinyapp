@@ -56,8 +56,11 @@ app.get("/urls", (req, res) => {
 
 //route for urls/new
 app.get("/urls/new", (req, res) => {
-  const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
-  res.render("urls_new", templateVars);
+  if (req.cookies.user_id) {
+    const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
+    res.render("urls_new", templateVars);
+  }
+  res.redirect('/login')
 });
 //route for urls/:id
 app.get("/urls/:id", (req, res) => {
@@ -67,32 +70,40 @@ app.get("/urls/:id", (req, res) => {
 
 //post request for /urls route - generate shortURL and redirect user to URL
 app.post("/urls", (req, res) => {
+  if (!req.cookies.user_id) {
+    res.status(401).send("You must be logged in to shorten URLs.");
+    return;
+  }
   console.log(req.body); // Log the POST request body to the console
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   console.log(urlDatabase);
   // res.send("Ok"); // Respond with 'Ok' (we will replace this)'
-  res.redirect(`/urls/:${shortURL}`) //issue - doesn't get longURL 
+  res.redirect(`/urls/${shortURL}`); //issue - doesn't get longURL 
 });
-//redirect shortURL to long URL
+//GET u/:id redirect shortURL to long URL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  if (!longURL) {
+    res.status(404).send("Error 404: The requested URL does not exist.");
+  } else {
+    res.redirect(longURL);
+  }
 });
 
-// Update long URL 
+// POST URLS/:id - Update long URL 
 app.post('/urls/:id', (req, res) => {
   const longURL = req.body.longURL;
   urlDatabase[req.params.id] = longURL;
   res.redirect('/urls');
 });
-// delete URL
+// POST Delete
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect("/urls");
 });
 
-//handle POST to /login - set user_id cookie and redirect back to /urls
+//POST login
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const user = getUserByEmail(email);
@@ -101,21 +112,25 @@ app.post('/login', (req, res) => {
     return;
   }
   if (user.password !== password) {
-    res.status(403).send("Password entered does not match")
+    res.status(403).send("Password entered does not match");
     return;
   }
   res.cookie('user_id', user.userID);
   res.redirect('/urls');
 });
 
-//clear user_id cookie from login
+//clear cookie at Logout
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/login');
 });
 
-//get request to render registration
+//GET Registration
 app.get('/registration', (req, res) => {
+  if (req.cookies.user_id) {
+    res.redirect('/urls');
+    return;
+  }
   const templateVars = { user: users[req.cookies['user_id']] };
   res.render("registration", templateVars);
 });
@@ -140,14 +155,18 @@ app.post('/registration', (req, res) => {
     email: req.body.email,
     password: req.body.password
   }
-  res.cookie('user_id', userID)
-  console.log(users)
-  console.log(req.body.email)
+  res.cookie('user_id', userID);
+  console.log(users);
+  console.log(req.body.email);
   res.redirect('/urls');
 });
 
 //get request render login
 app.get('/login', (req, res) => {
+  if (req.cookies.user_id){
+    res.redirect('/urls');
+    return;
+  }
   const templateVars = { user: users[req.cookies['user_id']] };
-  res.render('login', templateVars)
-})
+  res.render('login', templateVars);
+});
