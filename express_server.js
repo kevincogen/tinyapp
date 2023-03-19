@@ -5,6 +5,7 @@ app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
+const bcrypt = require('bcryptjs');
 
 //databases and helpers
 const urlDatabase = {}
@@ -138,7 +139,7 @@ app.post('/login', (req, res) => {
     res.status(403).send("This Email is not associated with a Registered User");
     return;
   }
-  if (user.password !== password) {
+  if (!bcrypt.compareSync(password, user.password)) {
     res.status(403).send("Password entered does not match");
     return;
   }
@@ -176,11 +177,12 @@ app.post('/registration', (req, res) => {
     res.status(400).send("Email already exists.");
     return;
   }
+  const hashedPassword = bcrypt.hashSync(password, 10); // hash the password using bcrypt
   const userID = generateRandomString()
   users[userID] = {
     userID,
     email: req.body.email,
-    password: req.body.password
+    password: hashedPassword // save the hashed password instead of the plain text password
   }
   res.cookie('user_id', userID);
   console.log(users);
