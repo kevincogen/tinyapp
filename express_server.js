@@ -85,11 +85,11 @@ app.post('/urls/:id', (req, res) => {
 
 //GET u/:id redirect shortURL to long URL.
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id].longURL; //when not valid longURL, it is undefined?
-  if (!longURL) {
+  const url = urlDatabase[req.params.id];
+  if (!url) {
     res.status(404).send("Error 404: The requested URL does not exist.");
   } else {
-    res.redirect(longURL);
+    res.redirect(url.longURL);
   }
 });
 
