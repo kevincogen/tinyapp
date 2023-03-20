@@ -143,7 +143,7 @@ app.post('/registration', (req, res) => {
     res.status(400).send("Email and password fields cannot be empty.");
     return;
   }
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
   if (user) {
     res.status(400).send("Email already exists.");
     return;
