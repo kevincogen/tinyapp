@@ -109,7 +109,7 @@ app.post("/urls/:id/delete", (req, res) => {
 //POST login
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
   if (!user) {
     res.status(403).send("This Email is not associated with a Registered User");
     return;
